@@ -8,8 +8,8 @@ const _inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const _syne = Syne({ subsets: ["latin"], variable: "--font-syne" });
 
 export const metadata: Metadata = {
-  title: 'Aurean Solutions - Premium Web Agency',
-  description: 'Transform your digital presence with Aurean Solutions. We craft stunning websites, e-commerce platforms, and digital experiences.',
+  title: 'Aurean Solutions - Custom Business Automation Systems',
+  description: 'Aurean Solutions builds custom booking and WhatsApp automation systems for service businesses — fewer no-shows, less manual admin, more time running your business.',
   generator: 'v0.app',
   icons: {
     icon: [

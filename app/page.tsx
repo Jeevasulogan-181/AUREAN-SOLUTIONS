@@ -7,7 +7,6 @@ import {
   Menu,
   X,
   Globe,
-  ShoppingCart,
   Smartphone,
   Palette,
   Code,
@@ -21,7 +20,6 @@ import {
   MapPin,
   Loader2,
   Instagram,
-  Linkedin,
   Star,
   ArrowRight,
   ChevronDown,
@@ -269,12 +267,12 @@ function HeroSection() {
         </div>
 
         <h1 className="reveal delay-100 text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
-          Systems That Drive Operations.
-          <span className="block gradient-text">Software That Scales.</span>
+          Stop Losing Bookings to
+          <span className="block gradient-text">Missed WhatsApp Messages</span>
         </h1>
 
         <p className="reveal delay-200 text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-10">
-          We build business-critical software systems that help SMEs and growing organisations manage, automate, and scale their operations — replacing inefficient manual processes with purpose-built digital infrastructure.
+          We build custom booking and automated WhatsApp reminder systems for clinics, salons, and service businesses — so you never lose a customer to a missed reply again.
         </p>
 
         <div className="reveal delay-300 flex flex-col sm:flex-row gap-4 justify-center">
@@ -292,6 +290,10 @@ function HeroSection() {
             Explore Our Systems
           </a>
         </div>
+
+        <p className="reveal delay-400 mt-8 text-sm text-gray-500">
+          Currently building custom systems for our first clients
+        </p>
 {/* 
         <div className="reveal delay-400 grid grid-cols-3 gap-8 mt-16 max-w-lg mx-auto">
           {[
@@ -334,18 +336,11 @@ function ServicesSection() {
   }, [])
 
   const services = [
-    { icon: MessageSquare, title: "CRM System", description: "Custom CRM platforms built around your actual sales process — centralising lead data, client history, follow-up pipelines, and team activity.", color: "#ec4899" },
-    { icon: Smartphone, title: "WhatsApp Automation System", description: "Integrated WhatsApp-based automation for customer engagement, order notifications, appointment reminders, and support flows.", color: "#22c55e" },
-    { icon: Globe, title: "Website Development", description: "Professional corporate and business websites built with modern, performance-optimised architecture.", color: "#3b82f6" },
     { icon: CheckCircle, title: "Appointment Booking System", description: "Fully custom scheduling platforms with automated confirmations, calendar sync, staff management, and client self-service portals.", color: "#f59e0b" },
+    { icon: Smartphone, title: "WhatsApp Automation System", description: "Integrated WhatsApp-based automation for customer engagement, order notifications, appointment reminders, and support flows.", color: "#22c55e" },
+    { icon: MessageSquare, title: "CRM System", description: "Custom CRM platforms built around your actual sales process — centralising lead data, client history, follow-up pipelines, and team activity.", color: "#ec4899" },
     { icon: Layers, title: "Inventory Management System", description: "End-to-end stock tracking and inventory control — eliminate manual reconciliation and gain real-time visibility across locations.", color: "#3b82f6", comingSoon: true },
-    { icon: FileText, title: "Invoice & Billing System", description: "Scalable invoicing and billing infrastructure that automates payment workflows, tracks receivables, and generates professional documentation.", color: "#8b5cf6", comingSoon: true },
-    { icon: ShoppingCart, title: "POS System", description: "Tailored point-of-sale systems for retail, F&B, and service businesses — with real-time transaction processing and integrated inventory sync.", color: "#10b981", comingSoon: true },
-    { icon: Rocket, title: "Payroll Management System", description: "Custom payroll platforms handling salary computation, EPF/SOCSO compliance, payslip generation, and leave management.", color: "#ef4444", comingSoon: true },
-    { icon: Code, title: "Operations Dashboard", description: "Business-critical command centres surfacing real-time KPIs, operational metrics, and team performance data for informed decision-making.", color: "#06b6d4", comingSoon: true },
-    { icon: Globe, title: "E-Commerce Platform", description: "Custom-engineered commerce platforms with full backend control — product management, order processing, payment integration, and analytics.", color: "#a855f7", comingSoon: true },
-    { icon: Layers, title: "Workflow Automation Tools", description: "Custom internal automation systems that replace repetitive manual tasks with triggered, rule-based workflows — reducing error and improving throughput.", color: "#f97316", comingSoon: true },
-    { icon: Palette, title: "UI/UX Design", description: "Interface design grounded in usability, brand clarity, and user flow — applied to both software systems and client-facing digital products.", color: "#ec4899", comingSoon: true },
+    { icon: Globe, title: "Website Development", description: "Professional corporate and business websites built with modern, performance-optimised architecture.", color: "#3b82f6" },
   ]
 
   return (
@@ -359,7 +354,7 @@ function ServicesSection() {
             What We <span className="gradient-text">Offer</span>
           </h2>
           <p className="reveal delay-200 text-gray-400 max-w-2xl mx-auto">
-            Engineering-first software systems built to solve real operational problems — from inventory and invoicing to CRM, payroll, and workflow automation.
+            Custom booking and WhatsApp automation systems built for service businesses — plus CRM, inventory, and website development to support them.
           </p>
         </div>
 
@@ -569,7 +564,7 @@ function TechStackSection() {
     { layer: "Frontend", techs: ["Next.js", "TypeScript", "Tailwind CSS", "ShadCN/UI", "Radix UI"], color: "#3b82f6" },
     { layer: "Backend", techs: ["Node.js", "NestJS"], color: "#8b5cf6" },
     { layer: "Database", techs: ["PostgreSQL", "Supabase"], color: "#10b981" },
-    { layer: "Hosting & Cloud", techs: ["Vercel", "Railway", "AWS (EC2, RDS, S3, CloudFront)"], color: "#f59e0b" },
+    { layer: "Hosting & Cloud", techs: ["DigitalOcean", "AWS (EC2, RDS, S3, CloudFront)"], color: "#f59e0b" },
     { layer: "DevOps", techs: ["GitHub Actions (CI/CD)"], color: "#ef4444" },
     { layer: "Design", techs: ["Figma"], color: "#ec4899" },
     { layer: "Auth", techs: ["Auth.js (NextAuth)"], color: "#06b6d4" },
@@ -674,7 +669,7 @@ function ContactSection() {
 
   const contactInfo = [
     { icon: Mail, label: "Email", value: "admin@aureansolutions.com", href: "mailto:admin@aureansolutions.com", color: "#3b82f6" },
-    { icon: Phone, label: "Phone", value: "+60 11-5135 9415", href: "tel:+601151359415", color: "#8b5cf6" },
+    { icon: Phone, label: "Phone", value: "019 361 1203", href: "tel:+60193611203", color: "#8b5cf6" },
     { icon: MapPin, label: "Location", value: "Petaling Jaya, Selangor, Malaysia", href: "#", color: "#ec4899" },
   ]
 
@@ -720,10 +715,7 @@ function ContactSection() {
                 <a href="https://www.instagram.com/aurean_solutions/" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-xl bg-[#111] border border-white/5 flex items-center justify-center text-gray-400 hover:text-white hover:border-white/20 transition-all" aria-label="Instagram">
                   <Instagram className="w-5 h-5" />
                 </a>
-                <a href="https://www.linkedin.com/in/jeeva10/" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-xl bg-[#111] border border-white/5 flex items-center justify-center text-gray-400 hover:text-white hover:border-white/20 transition-all" aria-label="LinkedIn">
-                  <Linkedin className="w-5 h-5" />
-                </a>
-                <a href="https://wa.me/601151359415" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-xl bg-[#111] border border-white/5 flex items-center justify-center text-gray-400 hover:text-white hover:border-white/20 transition-all" aria-label="WhatsApp">
+                <a href="https://wa.me/60193611203" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-xl bg-[#111] border border-white/5 flex items-center justify-center text-gray-400 hover:text-white hover:border-white/20 transition-all" aria-label="WhatsApp">
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
                   </svg>
