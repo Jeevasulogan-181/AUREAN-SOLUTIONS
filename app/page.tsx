@@ -3,6 +3,8 @@
 import React from "react"
 
 import { useEffect, useRef, useState } from "react"
+import Image from "next/image"
+import logo from "@/public/aurean-logo.png"
 import {
   Menu,
   X,
@@ -48,7 +50,7 @@ function AnimatedBackground() {
       <div className="stars stars-large" />
       
       {/* Grid overlay */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:60px_60px]" />
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-size-[60px_60px]" />
       
       {/* Vignette */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,#0a0a0a_70%)]" />
@@ -57,6 +59,16 @@ function AnimatedBackground() {
 }
 
 // Navigation
+const navLinks = [
+  { label: "Home", href: "#home", id: "home" },
+  { label: "Services", href: "#services", id: "services" },
+  { label: "Process", href: "#process", id: "process" },
+  { label: "Stack", href: "#stack", id: "stack" },
+  { label: "Contact", href: "#contact", id: "contact" },
+]
+
+const sectionIds = navLinks.map((l) => l.id)
+
 function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -64,16 +76,15 @@ function Navbar() {
   const [sliderStyle, setSliderStyle] = useState({ left: 0, width: 0, opacity: 0 })
   const linkRefs = useRef<Record<string, HTMLAnchorElement | null>>({})
   const navLinksContainerRef = useRef<HTMLDivElement>(null)
+  const menuButtonRef = useRef<HTMLButtonElement>(null)
+  const closeButtonRef = useRef<HTMLButtonElement>(null)
+  const mobilePanelRef = useRef<HTMLDivElement>(null)
 
-  const navLinks = [
-    { label: "Home", href: "#home", id: "home" },
-    { label: "Services", href: "#services", id: "services" },
-    { label: "Process", href: "#process", id: "process" },
-    { label: "Stack", href: "#stack", id: "stack" },
-    { label: "Contact", href: "#contact", id: "contact" },
-  ]
-
-  const sectionIds = navLinks.map((l) => l.id)
+  // Close the menu and hand focus back to the button that opened it
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false)
+    menuButtonRef.current?.focus()
+  }
 
   // Lock body scroll while the mobile sidebar is open
   useEffect(() => {
@@ -81,6 +92,34 @@ function Navbar() {
     return () => {
       document.body.style.overflow = ""
     }
+  }, [isMobileMenuOpen])
+
+  // While open: focus the close button, close on Escape, keep Tab inside the panel
+  useEffect(() => {
+    if (!isMobileMenuOpen) return
+    closeButtonRef.current?.focus()
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setIsMobileMenuOpen(false)
+        menuButtonRef.current?.focus()
+        return
+      }
+      if (e.key !== "Tab" || !mobilePanelRef.current) return
+      const focusable = mobilePanelRef.current.querySelectorAll<HTMLElement>("a[href], button")
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault()
+        first.focus()
+      }
+    }
+
+    document.addEventListener("keydown", onKeyDown)
+    return () => document.removeEventListener("keydown", onKeyDown)
   }, [isMobileMenuOpen])
 
   // Single passive scroll listener handles both navbar bg + active section
@@ -117,6 +156,7 @@ function Navbar() {
 
   return (
     <nav
+      aria-label="Main"
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled ? "bg-[#0a0a0a]/90 backdrop-blur-lg border-b border-white/5" : "bg-transparent"
       }`}
@@ -124,7 +164,7 @@ function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-20">
           <a href="#home" className="flex items-center group">
-            <img src="/aurean-logo.png" alt="Aurean Solutions" className="h-18 w-auto" />
+            <Image src={logo} alt="Aurean Solutions home" className="h-18 w-auto" preload />
           </a>
 
           {/* Desktop nav with sliding underline */}
@@ -144,7 +184,7 @@ function Navbar() {
 
             {/* Animated gradient underline slider */}
             <span
-              className="absolute -bottom-1 h-0.5 rounded-full bg-gradient-to-r from-violet-500 to-cyan-400 pointer-events-none"
+              className="absolute -bottom-1 h-0.5 rounded-full bg-linear-to-r from-violet-500 to-cyan-400 pointer-events-none"
               style={{
                 left: sliderStyle.left,
                 width: sliderStyle.width,
@@ -156,24 +196,27 @@ function Navbar() {
 
           <a
             href="#contact"
-            className="hidden md:flex px-5 py-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white text-sm font-medium hover:shadow-lg hover:shadow-purple-500/30 transition-all"
+            className="hidden md:flex px-5 py-2 rounded-full bg-linear-to-r from-blue-500 to-purple-600 text-white text-sm font-medium hover:shadow-lg hover:shadow-purple-500/30 transition-all"
           >
             Get Started
           </a>
 
           <button
+            ref={menuButtonRef}
             onClick={() => setIsMobileMenuOpen(true)}
-            className="md:hidden text-white p-2"
+            className="md:hidden text-white p-2 rounded-lg"
             aria-label="Open menu"
+            aria-expanded={isMobileMenuOpen}
+            aria-controls="mobile-menu"
           >
-            <Menu className="w-6 h-6" />
+            <Menu aria-hidden="true" className="w-6 h-6" />
           </button>
         </div>
       </div>
 
       {/* Mobile sidebar backdrop */}
       <div
-        onClick={() => setIsMobileMenuOpen(false)}
+        onClick={closeMobileMenu}
         className={`md:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${
           isMobileMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         }`}
@@ -182,24 +225,29 @@ function Navbar() {
 
       {/* Mobile sidebar panel */}
       <div
-        className={`md:hidden fixed top-0 right-0 z-50 h-full w-[78%] max-w-xs bg-[#0d0d0d] border-l border-white/10 shadow-2xl shadow-black/60 transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] flex flex-col ${
+        id="mobile-menu"
+        ref={mobilePanelRef}
+        className={`md:hidden fixed top-0 right-0 z-50 h-full w-[78%] max-w-xs bg-[#0d0d0d] border-l border-white/10 shadow-2xl shadow-black/60 transition-transform duration-300 ease-in-out flex flex-col ${
           isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
         }`}
         role="dialog"
         aria-modal="true"
+        aria-label="Menu"
+        inert={!isMobileMenuOpen}
       >
         <div className="flex items-center justify-between h-16 px-5 border-b border-white/5">
-          <img src="/aurean-logo.png" alt="Aurean Solutions" className="h-10 w-auto" />
+          <Image src={logo} alt="Aurean Solutions" className="h-10 w-auto" />
           <button
-            onClick={() => setIsMobileMenuOpen(false)}
+            ref={closeButtonRef}
+            onClick={closeMobileMenu}
             className="text-white p-2 -mr-2 rounded-full hover:bg-white/10 transition-colors"
             aria-label="Close menu"
           >
-            <X className="w-5 h-5" />
+            <X aria-hidden="true" className="w-5 h-5" />
           </button>
         </div>
 
-        <nav className="flex-1 overflow-y-auto px-3 py-4">
+        <nav aria-label="Mobile" className="flex-1 overflow-y-auto px-3 py-4">
           {navLinks.map((link, index) => (
             <a
               key={link.label}
@@ -218,7 +266,7 @@ function Navbar() {
             >
               {link.label}
               {activeSection === link.id && (
-                <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-violet-500 to-cyan-400" />
+                <span className="w-1.5 h-1.5 rounded-full bg-linear-to-r from-violet-500 to-cyan-400" />
               )}
             </a>
           ))}
@@ -228,7 +276,7 @@ function Navbar() {
           <a
             href="#contact"
             onClick={() => setIsMobileMenuOpen(false)}
-            className="flex items-center justify-center px-5 py-3 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white text-center font-medium hover:shadow-lg hover:shadow-purple-500/30 transition-all"
+            className="flex items-center justify-center px-5 py-3 rounded-full bg-linear-to-r from-blue-500 to-purple-600 text-white text-center font-medium hover:shadow-lg hover:shadow-purple-500/30 transition-all"
           >
             Get Started
           </a>
@@ -261,7 +309,7 @@ function HeroSection() {
     <section id="home" ref={sectionRef} className="relative min-h-screen flex items-center justify-center pt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div className="reveal inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-8">
-          <Rocket className="w-4 h-4 text-purple-400" />
+          <Rocket aria-hidden="true" className="w-4 h-4 text-purple-400" />
           <span className="text-sm text-gray-300">Custom Software Development & Digital Solutions</span>
         </div>
 
@@ -277,10 +325,10 @@ function HeroSection() {
         <div className="reveal delay-300 flex flex-col sm:flex-row gap-4 justify-center">
           <a
             href="#contact"
-            className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-medium hover:shadow-lg hover:shadow-purple-500/30 hover:-translate-y-0.5 transition-all"
+            className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-linear-to-r from-blue-500 to-purple-600 text-white font-medium hover:shadow-lg hover:shadow-purple-500/30 hover:-translate-y-0.5 transition-all"
           >
             Start Your Project
-            <ArrowRight className="w-5 h-5" />
+            <ArrowRight aria-hidden="true" className="w-5 h-5" />
           </a>
           <a
             href="#services"
@@ -295,7 +343,7 @@ function HeroSection() {
         </p>
 
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce-slow">
-          <ChevronDown className="w-6 h-6 text-gray-500" />
+          <ChevronDown aria-hidden="true" className="w-6 h-6 text-gray-500" />
         </div>
       </div>
     </section>
@@ -352,14 +400,14 @@ function ServicesSection() {
             >
               <div
                 className={`transition-all duration-500 ease-out ${
-                  service.comingSoon ? "blur-[3px] opacity-50 scale-[0.98] group-hover:blur-[4px]" : ""
+                  service.comingSoon ? "blur-[3px] opacity-50 scale-[0.98] group-hover:blur-xs" : ""
                 }`}
               >
                 <div
                   className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110"
                   style={{ backgroundColor: `${service.color}20` }}
                 >
-                  <service.icon className="w-6 h-6" style={{ color: service.color }} />
+                  <service.icon aria-hidden="true" className="w-6 h-6" style={{ color: service.color }} />
                 </div>
                 <h3 className="text-xl font-semibold text-white mb-2">{service.title}</h3>
                 <p className="text-gray-400 text-sm">{service.description}</p>
@@ -424,7 +472,7 @@ function ProcessSection() {
         </div>
 
         <div className="relative max-w-3xl mx-auto">
-          <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-blue-500 via-purple-500 to-pink-500 md:-translate-x-1/2" />
+          <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-px bg-linear-to-b from-blue-500 via-purple-500 to-pink-500 md:-translate-x-1/2" />
 
           {steps.map((step, index) => (
             <div
@@ -441,14 +489,14 @@ function ProcessSection() {
                     className="w-10 h-10 rounded-lg flex items-center justify-center"
                     style={{ backgroundColor: `${step.color}20` }}
                   >
-                    <step.icon className="w-5 h-5" style={{ color: step.color }} />
+                    <step.icon aria-hidden="true" className="w-5 h-5" style={{ color: step.color }} />
                   </div>
                   <h3 className="text-lg font-semibold text-white">{step.title}</h3>
                 </div>
                 <p className="text-gray-400 text-sm">{step.description}</p>
               </div>
 
-              <div className="absolute left-8 md:left-1/2 w-4 h-4 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 border-4 border-[#0a0a0a] md:-translate-x-1/2 -translate-x-1/2" />
+              <div className="absolute left-8 md:left-1/2 w-4 h-4 rounded-full bg-linear-to-r from-blue-500 to-purple-500 border-4 border-[#0a0a0a] md:-translate-x-1/2 -translate-x-1/2" />
 
               <div className="hidden md:block flex-1" />
             </div>
@@ -525,11 +573,29 @@ function TechStackSection() {
 }
 
 // Contact Section
+type ContactField = "Name" | "Email" | "Message"
+type ContactErrors = Partial<Record<ContactField, string>>
+
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+function validateContactForm(formData: FormData): ContactErrors {
+  const value = (field: ContactField) => String(formData.get(field) ?? "").trim()
+  const errors: ContactErrors = {}
+
+  if (!value("Name")) errors.Name = "Please enter your name."
+  if (!value("Email")) errors.Email = "Please enter your email address."
+  else if (!EMAIL_PATTERN.test(value("Email"))) errors.Email = "Please enter a valid email address."
+  if (!value("Message")) errors.Message = "Please enter a message."
+
+  return errors
+}
+
 function ContactSection() {
   const sectionRef = useRef<HTMLDivElement>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [message, setMessage] = useState("")
   const [isSuccess, setIsSuccess] = useState(false)
+  const [fieldErrors, setFieldErrors] = useState<ContactErrors>({})
   const formRef = useRef<HTMLFormElement>(null)
 
   useEffect(() => {
@@ -547,16 +613,48 @@ function ContactSection() {
     return () => observer.disconnect()
   }, [])
 
+  const showSuccess = () => {
+    setIsSuccess(true)
+    setMessage("Message Sent Successfully!")
+    formRef.current?.reset()
+
+    setTimeout(() => {
+      setMessage("")
+      setIsSuccess(false)
+    }, 5000)
+  }
+
+  const clearFieldError = (e: React.FormEvent<HTMLFormElement>) => {
+    const name = (e.target as HTMLInputElement).name as ContactField
+    if (fieldErrors[name]) setFieldErrors((prev) => ({ ...prev, [name]: undefined }))
+  }
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setIsSubmitting(true)
     setMessage("")
 
-    // Replace YOUR_FORM_ID below with the ID from your Formspree dashboard (formspree.io)
+    const formData = new FormData(formRef.current!)
+
+    // Honeypot: humans never see this field, so a value means a bot. Pretend it worked.
+    if (String(formData.get("_gotcha") ?? "").trim()) {
+      showSuccess()
+      return
+    }
+
+    const errors = validateContactForm(formData)
+    setFieldErrors(errors)
+    if (Object.keys(errors).length > 0) {
+      const firstInvalid = (Object.keys(errors) as ContactField[])[0]
+      formRef.current?.querySelector<HTMLElement>(`[name="${firstInvalid}"]`)?.focus()
+      return
+    }
+
+    setIsSubmitting(true)
+
+    // Formspree form ID (formspree.io dashboard → your form → Integration)
     const FORMSPREE_ID = "mkokkdoe"
 
     try {
-      const formData = new FormData(formRef.current!)
       const response = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
         method: "POST",
         body: formData,
@@ -564,17 +662,10 @@ function ContactSection() {
       })
 
       if (response.ok) {
-        setIsSuccess(true)
-        setMessage("Message Sent Successfully!")
-        formRef.current?.reset()
-
-        setTimeout(() => {
-          setMessage("")
-          setIsSuccess(false)
-        }, 5000)
+        showSuccess()
       } else {
-        const data = await response.json()
-        throw new Error(data?.errors?.[0]?.message || "Submission failed")
+        const data = await response.json().catch(() => null)
+        throw new Error(data?.errors?.[0]?.message || "Submission failed. Please try again.")
       }
     } catch (err: unknown) {
       setIsSuccess(false)
@@ -617,7 +708,7 @@ function ContactSection() {
                   className="w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform"
                   style={{ backgroundColor: `${info.color}20` }}
                 >
-                  <info.icon className="w-6 h-6" style={{ color: info.color }} />
+                  <info.icon aria-hidden="true" className="w-6 h-6" style={{ color: info.color }} />
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">{info.label}</p>
@@ -630,10 +721,10 @@ function ContactSection() {
               <p className="text-gray-400 mb-4">Follow us</p>
               <div className="flex gap-4">
                 <a href="https://www.instagram.com/aurean_solutions/" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-xl bg-[#111] border border-white/5 flex items-center justify-center text-gray-400 hover:text-white hover:border-white/20 transition-all" aria-label="Instagram">
-                  <Instagram className="w-5 h-5" />
+                  <Instagram aria-hidden="true" className="w-5 h-5" />
                 </a>
                 <a href="https://wa.me/60193611203" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-xl bg-[#111] border border-white/5 flex items-center justify-center text-gray-400 hover:text-white hover:border-white/20 transition-all" aria-label="WhatsApp">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <svg aria-hidden="true" className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
                   </svg>
                 </a>
@@ -642,36 +733,82 @@ function ContactSection() {
           </div>
 
           <div className="reveal-right delay-200">
-            <form ref={formRef} onSubmit={handleSubmit} className="space-y-6 p-8 rounded-2xl bg-[#111] border border-white/5">
-              <input
-                type="text"
-                name="Name"
-                placeholder="Your Name"
-                required
-                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-gray-500 focus:outline-none focus:border-blue-500 transition-colors"
-              />
-              <input
-                type="email"
-                name="Email"
-                placeholder="Your Email"
-                required
-                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-gray-500 focus:outline-none focus:border-blue-500 transition-colors"
-              />
-              <textarea
-                name="Message"
-                rows={5}
-                placeholder="Your Message"
-                required
-                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-gray-500 focus:outline-none focus:border-blue-500 transition-colors resize-none"
-              />
+            <form
+              ref={formRef}
+              onSubmit={handleSubmit}
+              onInput={clearFieldError}
+              noValidate
+              className="space-y-6 p-8 rounded-2xl bg-[#111] border border-white/5"
+            >
+              {/* Honeypot (Formspree _gotcha): hidden from people and assistive tech; bots tend to fill it */}
+              <div aria-hidden="true" className="sr-only">
+                <label>
+                  Leave this field empty
+                  <input type="text" name="_gotcha" tabIndex={-1} autoComplete="off" />
+                </label>
+              </div>
+
+              <div>
+                <label htmlFor="contact-name" className="sr-only">Your name</label>
+                <input
+                  id="contact-name"
+                  type="text"
+                  name="Name"
+                  placeholder="Your Name"
+                  required
+                  maxLength={100}
+                  autoComplete="name"
+                  aria-invalid={!!fieldErrors.Name}
+                  aria-describedby={fieldErrors.Name ? "contact-name-error" : undefined}
+                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-gray-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/40 transition-colors aria-invalid:border-red-500"
+                />
+                {fieldErrors.Name && (
+                  <p id="contact-name-error" className="mt-2 text-sm text-red-400">{fieldErrors.Name}</p>
+                )}
+              </div>
+              <div>
+                <label htmlFor="contact-email" className="sr-only">Your email</label>
+                <input
+                  id="contact-email"
+                  type="email"
+                  name="Email"
+                  placeholder="Your Email"
+                  required
+                  maxLength={254}
+                  autoComplete="email"
+                  aria-invalid={!!fieldErrors.Email}
+                  aria-describedby={fieldErrors.Email ? "contact-email-error" : undefined}
+                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-gray-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/40 transition-colors aria-invalid:border-red-500"
+                />
+                {fieldErrors.Email && (
+                  <p id="contact-email-error" className="mt-2 text-sm text-red-400">{fieldErrors.Email}</p>
+                )}
+              </div>
+              <div>
+                <label htmlFor="contact-message" className="sr-only">Your message</label>
+                <textarea
+                  id="contact-message"
+                  name="Message"
+                  rows={5}
+                  placeholder="Your Message"
+                  required
+                  maxLength={5000}
+                  aria-invalid={!!fieldErrors.Message}
+                  aria-describedby={fieldErrors.Message ? "contact-message-error" : undefined}
+                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-gray-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/40 transition-colors resize-none aria-invalid:border-red-500"
+                />
+                {fieldErrors.Message && (
+                  <p id="contact-message-error" className="mt-2 text-sm text-red-400">{fieldErrors.Message}</p>
+                )}
+              </div>
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-4 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold hover:shadow-lg hover:shadow-purple-500/30 hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 flex items-center justify-center gap-2"
+                className="w-full py-4 rounded-xl bg-linear-to-r from-blue-500 to-purple-600 text-white font-semibold hover:shadow-lg hover:shadow-purple-500/30 hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 flex items-center justify-center gap-2"
               >
                 {isSubmitting ? (
                   <>
-                    <Loader2 className="w-5 h-5 animate-spin" />
+                    <Loader2 aria-hidden="true" className="w-5 h-5 animate-spin" />
                     Sending...
                   </>
                 ) : (
@@ -699,7 +836,7 @@ function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <img src="/aurean-logo.png" alt="Aurean Solutions" className="h-7 w-auto" />
+            <Image src={logo} alt="Aurean Solutions" className="h-7 w-auto" />
           </div>
           <p className="text-gray-500 text-sm">&copy; 2026 Aurean Solutions Enterprise. All rights reserved.</p>
         </div>
