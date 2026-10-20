@@ -48,7 +48,7 @@ function AnimatedBackground() {
       <div className="stars stars-large" />
       
       {/* Grid overlay */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:60px_60px]" />
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-size-[60px_60px]" />
       
       {/* Vignette */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,#0a0a0a_70%)]" />
@@ -144,7 +144,7 @@ function Navbar() {
 
             {/* Animated gradient underline slider */}
             <span
-              className="absolute -bottom-1 h-0.5 rounded-full bg-gradient-to-r from-violet-500 to-cyan-400 pointer-events-none"
+              className="absolute -bottom-1 h-0.5 rounded-full bg-linear-to-r from-violet-500 to-cyan-400 pointer-events-none"
               style={{
                 left: sliderStyle.left,
                 width: sliderStyle.width,
@@ -156,7 +156,7 @@ function Navbar() {
 
           <a
             href="#contact"
-            className="hidden md:flex px-5 py-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white text-sm font-medium hover:shadow-lg hover:shadow-purple-500/30 transition-all"
+            className="hidden md:flex px-5 py-2 rounded-full bg-linear-to-r from-blue-500 to-purple-600 text-white text-sm font-medium hover:shadow-lg hover:shadow-purple-500/30 transition-all"
           >
             Get Started
           </a>
@@ -182,7 +182,7 @@ function Navbar() {
 
       {/* Mobile sidebar panel */}
       <div
-        className={`md:hidden fixed top-0 right-0 z-50 h-full w-[78%] max-w-xs bg-[#0d0d0d] border-l border-white/10 shadow-2xl shadow-black/60 transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] flex flex-col ${
+        className={`md:hidden fixed top-0 right-0 z-50 h-full w-[78%] max-w-xs bg-[#0d0d0d] border-l border-white/10 shadow-2xl shadow-black/60 transition-transform duration-300 ease-in-out flex flex-col ${
           isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
         }`}
         role="dialog"
@@ -218,7 +218,7 @@ function Navbar() {
             >
               {link.label}
               {activeSection === link.id && (
-                <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-violet-500 to-cyan-400" />
+                <span className="w-1.5 h-1.5 rounded-full bg-linear-to-r from-violet-500 to-cyan-400" />
               )}
             </a>
           ))}
@@ -228,7 +228,7 @@ function Navbar() {
           <a
             href="#contact"
             onClick={() => setIsMobileMenuOpen(false)}
-            className="flex items-center justify-center px-5 py-3 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white text-center font-medium hover:shadow-lg hover:shadow-purple-500/30 transition-all"
+            className="flex items-center justify-center px-5 py-3 rounded-full bg-linear-to-r from-blue-500 to-purple-600 text-white text-center font-medium hover:shadow-lg hover:shadow-purple-500/30 transition-all"
           >
             Get Started
           </a>
@@ -277,7 +277,7 @@ function HeroSection() {
         <div className="reveal delay-300 flex flex-col sm:flex-row gap-4 justify-center">
           <a
             href="#contact"
-            className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-medium hover:shadow-lg hover:shadow-purple-500/30 hover:-translate-y-0.5 transition-all"
+            className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-linear-to-r from-blue-500 to-purple-600 text-white font-medium hover:shadow-lg hover:shadow-purple-500/30 hover:-translate-y-0.5 transition-all"
           >
             Start Your Project
             <ArrowRight className="w-5 h-5" />
@@ -352,7 +352,7 @@ function ServicesSection() {
             >
               <div
                 className={`transition-all duration-500 ease-out ${
-                  service.comingSoon ? "blur-[3px] opacity-50 scale-[0.98] group-hover:blur-[4px]" : ""
+                  service.comingSoon ? "blur-[3px] opacity-50 scale-[0.98] group-hover:blur-xs" : ""
                 }`}
               >
                 <div
@@ -424,7 +424,7 @@ function ProcessSection() {
         </div>
 
         <div className="relative max-w-3xl mx-auto">
-          <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-blue-500 via-purple-500 to-pink-500 md:-translate-x-1/2" />
+          <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-px bg-linear-to-b from-blue-500 via-purple-500 to-pink-500 md:-translate-x-1/2" />
 
           {steps.map((step, index) => (
             <div
@@ -448,7 +448,7 @@ function ProcessSection() {
                 <p className="text-gray-400 text-sm">{step.description}</p>
               </div>
 
-              <div className="absolute left-8 md:left-1/2 w-4 h-4 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 border-4 border-[#0a0a0a] md:-translate-x-1/2 -translate-x-1/2" />
+              <div className="absolute left-8 md:left-1/2 w-4 h-4 rounded-full bg-linear-to-r from-blue-500 to-purple-500 border-4 border-[#0a0a0a] md:-translate-x-1/2 -translate-x-1/2" />
 
               <div className="hidden md:block flex-1" />
             </div>
@@ -667,7 +667,7 @@ function ContactSection() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-4 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold hover:shadow-lg hover:shadow-purple-500/30 hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 flex items-center justify-center gap-2"
+                className="w-full py-4 rounded-xl bg-linear-to-r from-blue-500 to-purple-600 text-white font-semibold hover:shadow-lg hover:shadow-purple-500/30 hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 flex items-center justify-center gap-2"
               >
                 {isSubmitting ? (
                   <>
