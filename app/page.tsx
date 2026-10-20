@@ -3,6 +3,8 @@
 import React from "react"
 
 import { useEffect, useRef, useState } from "react"
+import Image from "next/image"
+import logo from "@/public/aurean-logo.png"
 import {
   Menu,
   X,
@@ -124,7 +126,7 @@ function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-20">
           <a href="#home" className="flex items-center group">
-            <img src="/aurean-logo.png" alt="Aurean Solutions" className="h-18 w-auto" />
+            <Image src={logo} alt="Aurean Solutions home" className="h-18 w-auto" preload />
           </a>
 
           {/* Desktop nav with sliding underline */}
@@ -189,7 +191,7 @@ function Navbar() {
         aria-modal="true"
       >
         <div className="flex items-center justify-between h-16 px-5 border-b border-white/5">
-          <img src="/aurean-logo.png" alt="Aurean Solutions" className="h-10 w-auto" />
+          <Image src={logo} alt="Aurean Solutions" className="h-10 w-auto" />
           <button
             onClick={() => setIsMobileMenuOpen(false)}
             className="text-white p-2 -mr-2 rounded-full hover:bg-white/10 transition-colors"
@@ -699,7 +701,7 @@ function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <img src="/aurean-logo.png" alt="Aurean Solutions" className="h-7 w-auto" />
+            <Image src={logo} alt="Aurean Solutions" className="h-7 w-auto" />
           </div>
           <p className="text-gray-500 text-sm">&copy; 2026 Aurean Solutions Enterprise. All rights reserved.</p>
         </div>
