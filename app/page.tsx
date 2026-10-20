@@ -20,7 +20,6 @@ import {
   MapPin,
   Loader2,
   Instagram,
-  Star,
   ArrowRight,
   ChevronDown,
 } from "lucide-react"
@@ -294,19 +293,6 @@ function HeroSection() {
         <p className="reveal delay-400 mt-8 text-sm text-gray-500">
           Currently building custom systems for our first clients
         </p>
-{/* 
-        <div className="reveal delay-400 grid grid-cols-3 gap-8 mt-16 max-w-lg mx-auto">
-          {[
-            { value: "50+", label: "Projects" },
-            { value: "100%", label: "Satisfaction" },
-            { value: "24/7", label: "Support" },
-          ].map((stat) => (
-            <div key={stat.label} className="text-center">
-              <p className="text-2xl md:text-3xl font-bold gradient-text">{stat.value}</p>
-              <p className="text-sm text-gray-500 mt-1">{stat.label}</p>
-            </div>
-          ))}
-        </div> */}
 
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce-slow">
           <ChevronDown className="w-6 h-6 text-gray-500" />
@@ -465,75 +451,6 @@ function ProcessSection() {
               <div className="absolute left-8 md:left-1/2 w-4 h-4 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 border-4 border-[#0a0a0a] md:-translate-x-1/2 -translate-x-1/2" />
 
               <div className="hidden md:block flex-1" />
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-// Testimonials Section
-function TestimonialsSection() {
-  const sectionRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) entry.target.classList.add("active")
-        })
-      },
-      { threshold: 0.1, rootMargin: "-50px" }
-    )
-
-    const elements = sectionRef.current?.querySelectorAll(".reveal, .reveal-scale")
-    elements?.forEach((el) => observer.observe(el))
-    return () => observer.disconnect()
-  }, [])
-
-  const testimonials = [
-    { name: "Sarah Chen", role: "CEO, TechStart", content: "Aurean Solutions delivered beyond our expectations. Our new website has increased conversions by 40%.", rating: 5 },
-    { name: "Michael Torres", role: "Founder, GrowthLab", content: "Professional, creative, and incredibly responsive. They truly understood our vision and brought it to life.", rating: 5 },
-    { name: "Emily Watson", role: "Marketing Director", content: "The best investment we've made for our digital presence. Highly recommend their services!", rating: 5 },
-  ]
-
-  return (
-    <section id="testimonials" ref={sectionRef} className="relative py-24 z-10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <span className="reveal inline-block px-4 py-1 rounded-full bg-pink-500/10 text-pink-400 text-sm font-medium mb-4">
-            Testimonials
-          </span>
-          <h2 className="reveal delay-100 text-3xl md:text-5xl font-bold text-white mb-4">
-            What Clients <span className="gradient-text">Say</span>
-          </h2>
-          <p className="reveal delay-200 text-gray-400 max-w-2xl mx-auto">
-            Don{"'"}t just take our word for it.
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-6">
-          {testimonials.map((testimonial, index) => (
-            <div
-              key={testimonial.name}
-              className={`reveal-scale delay-${index * 100 + 100} p-6 rounded-2xl bg-[#111] border border-white/5 hover:border-white/20 transition-all`}
-            >
-              <div className="flex gap-1 mb-4">
-                {[...Array(testimonial.rating)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                ))}
-              </div>
-              <p className="text-gray-300 mb-6">{`"${testimonial.content}"`}</p>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm">
-                  {testimonial.name.charAt(0)}
-                </div>
-                <div>
-                  <p className="text-white font-medium text-sm">{testimonial.name}</p>
-                  <p className="text-gray-500 text-xs">{testimonial.role}</p>
-                </div>
-              </div>
             </div>
           ))}
         </div>
