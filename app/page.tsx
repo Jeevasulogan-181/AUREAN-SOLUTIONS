@@ -527,11 +527,29 @@ function TechStackSection() {
 }
 
 // Contact Section
+type ContactField = "Name" | "Email" | "Message"
+type ContactErrors = Partial<Record<ContactField, string>>
+
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+function validateContactForm(formData: FormData): ContactErrors {
+  const value = (field: ContactField) => String(formData.get(field) ?? "").trim()
+  const errors: ContactErrors = {}
+
+  if (!value("Name")) errors.Name = "Please enter your name."
+  if (!value("Email")) errors.Email = "Please enter your email address."
+  else if (!EMAIL_PATTERN.test(value("Email"))) errors.Email = "Please enter a valid email address."
+  if (!value("Message")) errors.Message = "Please enter a message."
+
+  return errors
+}
+
 function ContactSection() {
   const sectionRef = useRef<HTMLDivElement>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [message, setMessage] = useState("")
   const [isSuccess, setIsSuccess] = useState(false)
+  const [fieldErrors, setFieldErrors] = useState<ContactErrors>({})
   const formRef = useRef<HTMLFormElement>(null)
 
   useEffect(() => {
@@ -549,16 +567,48 @@ function ContactSection() {
     return () => observer.disconnect()
   }, [])
 
+  const showSuccess = () => {
+    setIsSuccess(true)
+    setMessage("Message Sent Successfully!")
+    formRef.current?.reset()
+
+    setTimeout(() => {
+      setMessage("")
+      setIsSuccess(false)
+    }, 5000)
+  }
+
+  const clearFieldError = (e: React.FormEvent<HTMLFormElement>) => {
+    const name = (e.target as HTMLInputElement).name as ContactField
+    if (fieldErrors[name]) setFieldErrors((prev) => ({ ...prev, [name]: undefined }))
+  }
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setIsSubmitting(true)
     setMessage("")
 
-    // Replace YOUR_FORM_ID below with the ID from your Formspree dashboard (formspree.io)
+    const formData = new FormData(formRef.current!)
+
+    // Honeypot: humans never see this field, so a value means a bot. Pretend it worked.
+    if (String(formData.get("_gotcha") ?? "").trim()) {
+      showSuccess()
+      return
+    }
+
+    const errors = validateContactForm(formData)
+    setFieldErrors(errors)
+    if (Object.keys(errors).length > 0) {
+      const firstInvalid = (Object.keys(errors) as ContactField[])[0]
+      formRef.current?.querySelector<HTMLElement>(`[name="${firstInvalid}"]`)?.focus()
+      return
+    }
+
+    setIsSubmitting(true)
+
+    // Formspree form ID (formspree.io dashboard → your form → Integration)
     const FORMSPREE_ID = "mkokkdoe"
 
     try {
-      const formData = new FormData(formRef.current!)
       const response = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
         method: "POST",
         body: formData,
@@ -566,17 +616,10 @@ function ContactSection() {
       })
 
       if (response.ok) {
-        setIsSuccess(true)
-        setMessage("Message Sent Successfully!")
-        formRef.current?.reset()
-
-        setTimeout(() => {
-          setMessage("")
-          setIsSuccess(false)
-        }, 5000)
+        showSuccess()
       } else {
-        const data = await response.json()
-        throw new Error(data?.errors?.[0]?.message || "Submission failed")
+        const data = await response.json().catch(() => null)
+        throw new Error(data?.errors?.[0]?.message || "Submission failed. Please try again.")
       }
     } catch (err: unknown) {
       setIsSuccess(false)
@@ -644,28 +687,68 @@ function ContactSection() {
           </div>
 
           <div className="reveal-right delay-200">
-            <form ref={formRef} onSubmit={handleSubmit} className="space-y-6 p-8 rounded-2xl bg-[#111] border border-white/5">
-              <input
-                type="text"
-                name="Name"
-                placeholder="Your Name"
-                required
-                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-gray-500 focus:outline-none focus:border-blue-500 transition-colors"
-              />
-              <input
-                type="email"
-                name="Email"
-                placeholder="Your Email"
-                required
-                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-gray-500 focus:outline-none focus:border-blue-500 transition-colors"
-              />
-              <textarea
-                name="Message"
-                rows={5}
-                placeholder="Your Message"
-                required
-                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-gray-500 focus:outline-none focus:border-blue-500 transition-colors resize-none"
-              />
+            <form
+              ref={formRef}
+              onSubmit={handleSubmit}
+              onInput={clearFieldError}
+              noValidate
+              className="space-y-6 p-8 rounded-2xl bg-[#111] border border-white/5"
+            >
+              {/* Honeypot (Formspree _gotcha): hidden from people and assistive tech; bots tend to fill it */}
+              <div aria-hidden="true" className="sr-only">
+                <label>
+                  Leave this field empty
+                  <input type="text" name="_gotcha" tabIndex={-1} autoComplete="off" />
+                </label>
+              </div>
+
+              <div>
+                <input
+                  type="text"
+                  name="Name"
+                  placeholder="Your Name"
+                  required
+                  maxLength={100}
+                  autoComplete="name"
+                  aria-invalid={!!fieldErrors.Name}
+                  aria-describedby={fieldErrors.Name ? "contact-name-error" : undefined}
+                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-gray-500 focus:outline-none focus:border-blue-500 transition-colors aria-invalid:border-red-500"
+                />
+                {fieldErrors.Name && (
+                  <p id="contact-name-error" className="mt-2 text-sm text-red-400">{fieldErrors.Name}</p>
+                )}
+              </div>
+              <div>
+                <input
+                  type="email"
+                  name="Email"
+                  placeholder="Your Email"
+                  required
+                  maxLength={254}
+                  autoComplete="email"
+                  aria-invalid={!!fieldErrors.Email}
+                  aria-describedby={fieldErrors.Email ? "contact-email-error" : undefined}
+                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-gray-500 focus:outline-none focus:border-blue-500 transition-colors aria-invalid:border-red-500"
+                />
+                {fieldErrors.Email && (
+                  <p id="contact-email-error" className="mt-2 text-sm text-red-400">{fieldErrors.Email}</p>
+                )}
+              </div>
+              <div>
+                <textarea
+                  name="Message"
+                  rows={5}
+                  placeholder="Your Message"
+                  required
+                  maxLength={5000}
+                  aria-invalid={!!fieldErrors.Message}
+                  aria-describedby={fieldErrors.Message ? "contact-message-error" : undefined}
+                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-gray-500 focus:outline-none focus:border-blue-500 transition-colors resize-none aria-invalid:border-red-500"
+                />
+                {fieldErrors.Message && (
+                  <p id="contact-message-error" className="mt-2 text-sm text-red-400">{fieldErrors.Message}</p>
+                )}
+              </div>
               <button
                 type="submit"
                 disabled={isSubmitting}
