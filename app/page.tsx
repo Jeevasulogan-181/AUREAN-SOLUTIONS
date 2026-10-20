@@ -59,6 +59,16 @@ function AnimatedBackground() {
 }
 
 // Navigation
+const navLinks = [
+  { label: "Home", href: "#home", id: "home" },
+  { label: "Services", href: "#services", id: "services" },
+  { label: "Process", href: "#process", id: "process" },
+  { label: "Stack", href: "#stack", id: "stack" },
+  { label: "Contact", href: "#contact", id: "contact" },
+]
+
+const sectionIds = navLinks.map((l) => l.id)
+
 function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -66,16 +76,6 @@ function Navbar() {
   const [sliderStyle, setSliderStyle] = useState({ left: 0, width: 0, opacity: 0 })
   const linkRefs = useRef<Record<string, HTMLAnchorElement | null>>({})
   const navLinksContainerRef = useRef<HTMLDivElement>(null)
-
-  const navLinks = [
-    { label: "Home", href: "#home", id: "home" },
-    { label: "Services", href: "#services", id: "services" },
-    { label: "Process", href: "#process", id: "process" },
-    { label: "Stack", href: "#stack", id: "stack" },
-    { label: "Contact", href: "#contact", id: "contact" },
-  ]
-
-  const sectionIds = navLinks.map((l) => l.id)
 
   // Lock body scroll while the mobile sidebar is open
   useEffect(() => {
